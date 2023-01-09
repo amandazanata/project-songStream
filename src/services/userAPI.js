@@ -12,7 +12,7 @@ const saveUser = (user) => localStorage.setItem(USER_KEY, JSON.stringify(user));
 // não se preocupe, estudaremos isso mais futuramente
 // --------------------------------------------------------------------
 
-const simulateRequest = (response) => (callback) => {
+export const simulateRequest = (response) => (callback) => {
   setTimeout(() => {
     callback(response);
   }, TIMEOUT);

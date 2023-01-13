@@ -1,9 +1,9 @@
-const USER_KEY = 'user';
-const TIMEOUT = 1500;
-const SUCCESS_STATUS = 'OK';
+export const USER_KEY = 'user';
+export const TIMEOUT = 1500;
+export const SUCCESS_STATUS = 'OK';
 
-const readUser = () => JSON.parse(localStorage.getItem(USER_KEY));
-const saveUser = (user) => localStorage.setItem(USER_KEY, JSON.stringify(user));
+export const readUser = () => JSON.parse(localStorage.getItem(USER_KEY));
+export const saveUser = (user) => localStorage.setItem(USER_KEY, JSON.stringify(user));
 
 // --------------------------------------------------------------------
 // A função simulateRequest simula uma requisição para uma API externa

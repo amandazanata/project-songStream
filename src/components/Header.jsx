@@ -1,25 +1,24 @@
 import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { getUser } from '../services/userAPI';
 
 class Header extends React.Component {
   state = {
-    getUser,
+    name: '',
+    paginaCarregando: false,
   }
 
-  componentDidMount() {
-    this.pegaUsuario;
-  }
+async componentDidMount() {
+  this.setState({
+    paginaCarregando: true,
+  }, async () => {
+    const name = await getUser();
+  })
+}
 
-  pegaUsuario = () => {
-    this.setState({
-      getUser,
-    })
-    console.log(getUser);
-  }
 
   render() {
-    const { getUser } = this.state
+    const { name, paginaCarregando } = this.state
     return (
       <>
       <header data-testid="header-component">
@@ -40,4 +39,4 @@ class Header extends React.Component {
   }
 }
 
-export default withRouter(Header);
+export default Header;

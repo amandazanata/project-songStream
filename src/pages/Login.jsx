@@ -46,16 +46,16 @@ class Login extends React.Component {
               <form>
                 <input
                   type="text"
-                  onChange={ (event) => this.validaClick(event) }
                   data-testid="login-name-input"
-                  value={ name }
                   placeholder="Nome"
+                  value={ name }
+                  onChange={ (event) => this.validaClick(event) }
                 />
                 <button
                   type="submit"
-                  onClick={ (event) => this.clicaBotao(event) }
                   data-testid="login-submit-button"
                   disabled={ desab }
+                  onClick={ (event) => this.clicaBotao(event) }
                 >
                   Entrar
                 </button>

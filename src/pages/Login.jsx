@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import Carregando from './Carregando';
 import { createUser } from '../services/userAPI';
 
@@ -8,7 +9,7 @@ class Login extends React.Component {
     desab: true,
     logado: false,
     carregando: false,
-  }
+  };
 
   validaClick({ target }) {
     const number = 3;
@@ -37,6 +38,7 @@ class Login extends React.Component {
   render() {
     const { name, desab, logado, carregando } = this.state;
     const { history } = this.props;
+    console.log(history);
 
     return (
       <div>
@@ -68,4 +70,8 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+Login.propTypes = {
+  history: PropTypes.object,
+}.isRequired;
+
+export default withRouter(Login);

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { getUser } from '../services/userAPI';
+import Carregando from '/home/hamandis/Trybe/projetos/sd-027-b-project-trybetunes/src/pages/Carregando.jsx';
 
 class Header extends React.Component {
   state = {
@@ -12,27 +13,45 @@ async componentDidMount() {
   this.setState({
     paginaCarregando: true,
   }, async () => {
-    const name = await getUser();
+    const user = await getUser();
+
+    this.setState({
+      name: user.name,
+      paginaCarregando: false,
+    })
   })
 }
-
 
   render() {
     const { name, paginaCarregando } = this.state
     return (
       <>
       <header data-testid="header-component">
-        <span data-testid="header-user-name">
-          { getUser }
-          <div>
-            <br />
-        <Link to="/search">Search</Link>
-        <br />
-        <Link to="/favorites">Favorites</Link>
-        <br />
-        <Link to="/profile">Profile</Link>
-          </div>
-        </span>
+          { paginaCarregando ? <Carregando /> : (
+            <h2 data-testid="header-user-name">{name}</h2>) }
+        <div>
+        <Link
+        to="/search"
+        data-testid="link-to-search"
+        >
+          Search
+        </Link>
+
+        <Link
+        to="/favorites"
+        data-testid="link-to-favorites"
+        >
+          Favorites
+        </Link>
+
+        <Link
+        to="/profile"
+        data-testid="link-to-profile"
+        >
+          Profile
+        </Link>
+          
+        </div>
       </header>
       </>
     )

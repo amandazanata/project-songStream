@@ -1,13 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
+import Header from '../components/Header';
 
-export default class Favorites extends Component {
+class Favorites extends React.Component {
   render() {
     return (
       <>
         <div data-testid="page-favorites">
-        <p data-testid="header-user-name">Página Favoritos</p>
+        <Header />
       </div>
       </>
     );
   }
 }
+
+export default Favorites;

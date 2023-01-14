@@ -1,14 +1,16 @@
-import React, { Component } from 'react';
+import React from 'react';
+import Header from '../components/Header';
 
-export default class ProfileEdit extends Component {
+class ProfileEdit extends React.Component {
   render() {
     return (
       <>
         <div data-testid="page-profile-edit">
-        <p data-testid="header-user-name">
-        </p>
+          <Header />
       </div>
       </>
     );
   }
 }
+
+export default ProfileEdit;

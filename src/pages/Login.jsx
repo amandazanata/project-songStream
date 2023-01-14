@@ -13,6 +13,7 @@ class Login extends React.Component {
 
   validaClick({ target }) {
     const number = 3;
+
     this.setState(() => ({
       name: target.value,
       desab: target.value.length < number,
@@ -28,6 +29,7 @@ class Login extends React.Component {
       carregando: true,
     }, async () => {
       await createUser({ name });
+
       this.setState({
         carregando: false,
         logado: true,
@@ -38,7 +40,7 @@ class Login extends React.Component {
   render() {
     const { name, desab, logado, carregando } = this.state;
     const { history } = this.props;
-    console.log(history);
+    // console.log(history);
 
     return (
       <div>
@@ -46,6 +48,7 @@ class Login extends React.Component {
           {carregando === true
             ? <Carregando /> : (
               <form>
+
                 <input
                   type="text"
                   data-testid="login-name-input"
@@ -53,6 +56,7 @@ class Login extends React.Component {
                   value={ name }
                   onChange={ (event) => this.validaClick(event) }
                 />
+
                 <button
                   type="submit"
                   data-testid="login-submit-button"

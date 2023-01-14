@@ -1,48 +1,71 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
 import Carregando from './Carregando';
-import NotFound from './NotFound';
 import { createUser } from '../services/userAPI';
-import Header from '../components/Header';
 
 class Login extends React.Component {
   state = {
-    user: '',
+    name: '',
+    desab: true,
+    logado: false,
+    carregando: false,
   }
 
-  saveUser = () => { // salva no localStorage e muda rota para componente Search caso obtenha sucesso na chamada da API
-    const { user } = this.state;
-    const { history } = this.props;
-    localStorage.setItem('user', JSON.stringify({ name: user }))
-    history.push('/search');
+  validaClick({ target }) {
+    const number = 3;
+    this.setState(() => ({
+      name: target.value,
+      desab: target.value.length < number,
+    }));
   }
 
+  clicaBotao(event) {
+    const { name } = this.state;
+
+    event.preventDefault();
+
+    this.setState({
+      carregando: true,
+    }, async () => {
+      await createUser({ name });
+      this.setState({
+        carregando: false,
+        logado: true,
+      });
+    });
+  }
 
   render() {
-    const { user } = this.state;
-    const tres = 3;
+    const { name, desab, logado, carregando } = this.state;
+    const { history } = this.props;
 
     return (
-      <>
-      <div data-testid="page-login">
-        <input
-          type="text"
-          data-testid="login-name-input"
-          onChange={ ({ target }) => this.setState({ user: target.value }) }
-          />
-
-        <button
-          type="submit"
-          data-testid="login-submit-button"
-          disabled={ user.length < tres }
-          onClick={ this.saveUser }
-          >
-          Entrar
-        </button>
+      <div>
+        <div data-testid="page-login">
+          {carregando === true
+            ? <Carregando /> : (
+              <form>
+                <input
+                  type="text"
+                  onChange={ (event) => this.validaClick(event) }
+                  data-testid="login-name-input"
+                  value={ name }
+                  placeholder="Nome"
+                />
+                <button
+                  type="submit"
+                  onClick={ (event) => this.clicaBotao(event) }
+                  data-testid="login-submit-button"
+                  disabled={ desab }
+                >
+                  Entrar
+                </button>
+              </form>
+            )}
+          {logado && history.push('/search')}
         </div>
-      </>
+      </div>
     );
   }
 }
 
-export default withRouter(Login);
+export default Login;

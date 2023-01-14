@@ -5,8 +5,7 @@ export default class Profile extends Component {
     return (
       <>
       <div data-testid="page-profile">
-        <p data-testid="header-user-name">
-        <Header />
+        <p data-testid="header-user-name">Profile
         </p>
       </div>
       </>

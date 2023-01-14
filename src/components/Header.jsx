@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Link, withRouter } from 'react-router-dom';
 import { getUser } from '../services/userAPI';
 
-export default class Header extends Component {
+class Header extends React.Component {
   state = {
     getUser,
   }
@@ -15,6 +15,7 @@ export default class Header extends Component {
     this.setState({
       getUser,
     })
+    console.log(getUser);
   }
 
   render() {
@@ -38,3 +39,5 @@ export default class Header extends Component {
     )
   }
 }
+
+export default withRouter(Header);

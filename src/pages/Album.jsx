@@ -1,24 +1,24 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
-import Carregando from './Carregando';
+import Carregando from '../components/Carregando';
 import MusicCard from '../components/MusicCard';
 import { getFavoriteSongs, addSong, removeSong } from '../services/favoriteSongsAPI';
 import getMusics from '../services/musicsAPI';
 
 class Album extends React.Component {
   state = {
-    carregando: false,
-    album: [],
     arte: '',
     artista: '',
     nomeAlbum: '',
+    carregando: false,
+    album: [],
     musicasFavoritas: [],
   };
 
   componentDidMount() {
     this.procuraMusica();
-    this.musicasFavoritas();
+    this.favoritas();
   }
 
   async aguardaMusica(track) {
@@ -38,7 +38,7 @@ class Album extends React.Component {
     this.setState({ carregando: false });
   }
 
-  async musicasFavoritas() {
+  async favoritas() {
     const musicasFavoritas = await getFavoriteSongs();
 
     this.setState({ musicasFavoritas });
@@ -46,14 +46,14 @@ class Album extends React.Component {
 
   async procuraMusica() {
     const { match: { params: { id } } } = this.props;
-    const musics = await getMusics(id);
+    const musicas = await getMusics(id);
 
-    if (musics !== undefined) {
+    if (musicas !== undefined) {
       this.setState({
-        album: musics,
-        artista: musics[0].artistName,
-        nomeAlbum: musics[0].collectionName,
-        arte: musics[0].artworkUrl100,
+        album: musicas,
+        artista: musicas[0].artistName,
+        nomeAlbum: musicas[0].collectionName,
+        arte: musicas[0].artworkUrl100,
       });
     }
   }
@@ -72,18 +72,19 @@ class Album extends React.Component {
 
       <div data-testid="page-album">
         <Header />
-        <div className="album-container">
-          <div className="album-info-container">
+        <div>
+          <div>
             <img src={ arte } alt={ nomeAlbum } />
             <p data-testid="album-name">{ nomeAlbum }</p>
             <p data-testid="artist-name">{ artista }</p>
           </div>
           { carregando ? <Carregando /> : (
-            <div className="music-container">
+            <div>
 
-              <p className="text-found-album">
+              <p>
                 {`Musicas encontradas para o álbum ${nomeAlbum}`}
               </p>
+
               {album.slice(1).map((track) => (
                 <MusicCard
                   key={ track.trackId }
@@ -94,10 +95,9 @@ class Album extends React.Component {
                 />
               ))}
             </div>
+
           )}
-
         </div>
-
       </div>
     );
   }

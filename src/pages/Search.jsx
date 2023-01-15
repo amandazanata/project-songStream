@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import searchAlbumsAPI from '../services/searchAlbumsAPI';
 import Header from '../components/Header';
-import Carregando from './Carregando';
+import Carregando from '../components/Carregando';
 
 class Search extends React.Component {
   state = {

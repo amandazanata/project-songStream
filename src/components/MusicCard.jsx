@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Carregando from '../pages/Carregando';
+import Carregando from './Carregando';
 
 class MusicCard extends React.Component {
   state = {

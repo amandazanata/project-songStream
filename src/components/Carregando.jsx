@@ -4,7 +4,7 @@ class Carregando extends React.Component {
   render() {
     return (
       <div>
-        <p>Carregando...</p>
+        <h3>Carregando...</h3>
       </div>
     );
   }

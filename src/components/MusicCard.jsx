@@ -1,31 +1,60 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-class MusicCard extends Component {
+import Loading from './Loading';
+
+class MusicCard extends React.Component {
+  constructor() {
+    super();
+
+    this.state = {
+      loading: false,
+    };
+  }
+
   render() {
-    const {
-      url,
-      trackName,
-    } = this.props;
+    const { loading } = this.state;
+    const { track, isFavorite, favoriteSong } = this.props;
 
     return (
-      <div>
-        <h1>{trackName}</h1>
-        <audio data-testid="audio-component" src={ url } controls>
-          <track kind="captions" />
-          O seu navegador não suporta o elemento
-          {' '}
-          <code>audio</code>
-          .
-        </audio>
-      </div>
+      loading ? <Loading /> : (
+        <div className="individual-music-container">
+
+          <p className="song-title">{track.trackName}</p>
+          <div className="audio-favorita-container">
+            <audio data-testid="audio-component" src={ track.previewUrl } controls>
+              <track kind="captions" />
+              O seu navegador não suporta o elemento
+              <code>audio</code>
+            </audio>
+            <label htmlFor={ track.trackId }>
+              Favorita
+              <input
+                className="favorite"
+                type="checkbox"
+                data-testid={ `checkbox-music-${track.trackId}` }
+                id={ track.trackId }
+                onChange={ favoriteSong }
+                checked={ isFavorite }
+              />
+            </label>
+          </div>
+        </div>
+      )
+
     );
   }
 }
 
 MusicCard.propTypes = {
-  url: PropTypes.string,
-  trackName: PropTypes.string,
-}.isRequired;
+  track: PropTypes.shape({
+    trackName: PropTypes.string,
+    previewUrl: PropTypes.string,
+    trackId: PropTypes.number,
+  }).isRequired,
+  isFavorite: PropTypes.bool,
+  favoriteSong: PropTypes.func.isRequired,
+};
+MusicCard.defaultProps = { isFavorite: false };
 
 export default MusicCard;

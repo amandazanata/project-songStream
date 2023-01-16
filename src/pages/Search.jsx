@@ -7,48 +7,53 @@ import Loading from '../components/Loading';
 class Search extends React.Component {
   constructor() {
     super();
+
     this.state = {
-      name: '',
+      nameSearched: '',
       searchInput: '',
-      carregando: false,
+      loading: false,
       apiRequest: [],
       requestSearch: false,
     };
-    this.aguardaApi = this.aguardaApi.bind(this);
-    this.aguardaClick = this.aguardaClick.bind(this);
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleClick = this.handleClick.bind(this);
     this.showAlbum = this.showAlbum.bind(this);
   }
 
-  aguardaApi({ target }) {
+  handleChange({ target }) {
     const { name } = target;
     const { value } = target;
+
     this.setState({
       [name]: value,
     });
   }
 
-  async aguardaClick(event) {
+  async handleClick(event) {
     event.preventDefault();
     const { searchInput } = this.state;
+
     this.setState({
-      carregando: true,
-      name: searchInput,
+      loading: true,
+      nameSearched: searchInput,
     });
     const apiRequest = await searchAlbumsAPIs(searchInput);
     this.setState({
       apiRequest,
       searchInput: '',
-      carregando: false,
+      loading: false,
       requestSearch: true,
     });
   }
 
   showAlbum() {
-    const { apiRequest, name } = this.state;
+    const { apiRequest, nameSearched } = this.state;
+
     return apiRequest.length === 0 ? <p>Nenhum álbum foi encontrado</p>
       : (
         <div className="search-result">
-          <p className="result-text">{`Resultado de álbuns de: ${name}`}</p>
+          <p className="result-text">{`Resultado de álbuns de: ${nameSearched}`}</p>
           <div className="album-miniature-div">
             {apiRequest.map((album) => (
               <Link
@@ -69,16 +74,18 @@ class Search extends React.Component {
               </Link>
             ))}
           </div>
+
         </div>);
   }
 
   render() {
-    const { searchInput, carregando, requestSearch } = this.state;
-    const number = 2;
+    const { searchInput, loading, requestSearch } = this.state;
+    const minLetters = 2;
+
     return (
       <div data-testid="page-search">
         <Header />
-        {carregando ? <Loading /> : (
+        {loading ? <Loading /> : (
           <form className="search-form">
             <input
               data-testid="search-artist-input"
@@ -87,21 +94,24 @@ class Search extends React.Component {
               id="searchInput"
               placeholder="Nome do Artista"
               value={ searchInput }
-              onChange={ this.aguardaApi }
+              onChange={ this.handleChange }
             />
             <button
               type="submit"
-              data-testid="search-artist-button"
               id="btn-search-form"
-              disabled={ searchInput.length < number }
-              onClick={ this.aguardaClick }
+              data-testid="search-artist-button"
+              disabled={ searchInput.length < minLetters }
+              onClick={ this.handleClick }
             >
               Pesquisar
             </button>
           </form>
         )}
+
         { requestSearch ? this.showAlbum() : null }
+
       </div>
+
     );
   }
 }

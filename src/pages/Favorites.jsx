@@ -7,10 +7,12 @@ import Loading from '../components/Loading';
 class Favorites extends React.Component {
   constructor() {
     super();
+
     this.state = {
       favoriteMusics: [],
       loading: false,
     };
+
     this.saveFavoriteMusics = this.saveFavoriteMusics.bind(this);
     this.handleSong = this.handleSong.bind(this);
   }
@@ -23,13 +25,16 @@ class Favorites extends React.Component {
     this.setState({ loading: true });
     await removeSong(track);
     this.setState({ loading: true });
+
     await this.saveFavoriteMusics();
     this.setState({ loading: false });
   }
 
   async saveFavoriteMusics() {
     this.setState({ loading: true });
+
     await getFavoriteSongs().then((res) => this.setState({ favoriteMusics: res }));
+
     this.setState({ loading: false });
   }
 

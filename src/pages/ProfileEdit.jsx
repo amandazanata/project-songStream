@@ -7,6 +7,7 @@ import { getUser, updateUser } from '../services/userAPI';
 class ProfileEdit extends Component {
   constructor() {
     super();
+
     this.state = {
       loading: true,
       name: '',
@@ -124,6 +125,7 @@ class ProfileEdit extends Component {
     );
   }
 }
+
 ProfileEdit.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,

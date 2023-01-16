@@ -6,6 +6,7 @@ import Loading from './Loading';
 class Header extends React.Component {
   constructor() {
     super();
+
     this.state = {
       name: '',
       loadingPage: false,
@@ -27,11 +28,13 @@ class Header extends React.Component {
   render() {
     const { name, loadingPage } = this.state;
     return (
-      <header data-testid="header-component">
-        { loadingPage ? <Loading />
-          : (
-            <p data-testid="header-user-name">{ name }</p>
-          ) }
+      <header data-testid="header-component" className="mainHeader">
+        <div className="header-info">
+          { loadingPage ? <Loading />
+            : (
+              <h1 data-testid="header-user-name">{ name }</h1>
+            ) }
+        </div>
         <nav>
           <Link
             to="/search"
@@ -39,12 +42,14 @@ class Header extends React.Component {
           >
             Search
           </Link>
+
           <Link
             to="/favorites"
             data-testid="link-to-favorites"
           >
             Favorites
           </Link>
+
           <Link
             to="/profile"
             data-testid="link-to-profile"

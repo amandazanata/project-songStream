@@ -55,8 +55,10 @@ class Profile extends Component {
             </>
           )}
         </div>
+
       </div>
     );
   }
 }
+
 export default Profile;

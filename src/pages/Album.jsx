@@ -9,6 +9,7 @@ import Loading from '../components/Loading';
 class Album extends React.Component {
   constructor() {
     super();
+
     this.state = {
       loading: false,
       album: [],
@@ -17,6 +18,7 @@ class Album extends React.Component {
       nameAlbum: '',
       favoriteMusics: [],
     };
+
     this.findMusics = this.findMusics.bind(this);
     this.saveFavoriteMusics = this.saveFavoriteMusics.bind(this);
     this.handleSong = this.handleSong.bind(this);
@@ -75,6 +77,7 @@ class Album extends React.Component {
           </div>
           { loading ? <Loading /> : (
             <div className="music-container">
+
               <p className="text-found-album">
                 {`Musicas encontradas para o álbum ${nameAlbum}`}
               </p>
@@ -89,11 +92,14 @@ class Album extends React.Component {
               ))}
             </div>
           )}
+
         </div>
+
       </div>
     );
   }
 }
+
 Album.propTypes = {
   match: PropTypes.shape({
     params: PropTypes.shape({

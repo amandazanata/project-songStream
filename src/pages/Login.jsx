@@ -39,35 +39,29 @@ class Login extends Component {
   render() {
     const { name, isButtonDisabled, isLoggedIn, loading } = this.state;
     return (
-      <div className="loginContainer">
-        <img src="./trybetunes/images/logo-trybetunes.png" alt="" className="mainLogo" />
-        <h1 className="logo">
-          <img src={ TrybeTunesHeader } alt="TrybeTunesheader" />
-        </h1>
-        <div data-testid="page-login" className="loginFormContainer">
-          {loading === true
-            ? <Loading />
-            : (
-              <form>
-                <input
-                  type="text"
-                  onChange={ (event) => this.handleChange(event) }
-                  data-testid="login-name-input"
-                  value={ name }
-                  placeholder="Nome"
-                />
-                <button
-                  type="submit"
-                  onClick={ (event) => this.handleSubmit(event) }
-                  data-testid="login-submit-button"
-                  disabled={ isButtonDisabled }
-                >
-                  Entrar
-                </button>
-              </form>
-            )}
-          {isLoggedIn && <Redirect to="/search" />}
-        </div>
+      <div data-testid="page-login" className="loginFormContainer">
+        {loading === true
+          ? <Loading />
+          : (
+            <form>
+              <input
+                type="text"
+                onChange={ (event) => this.handleChange(event) }
+                data-testid="login-name-input"
+                value={ name }
+                placeholder="Nome"
+              />
+              <button
+                type="submit"
+                onClick={ (event) => this.handleSubmit(event) }
+                data-testid="login-submit-button"
+                disabled={ isButtonDisabled }
+              >
+                Entrar
+              </button>
+            </form>
+          )}
+        {isLoggedIn && <Redirect to="/search" />}
       </div>
     );
   }

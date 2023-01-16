@@ -1,108 +1,110 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import searchAlbumsAPI from '../services/searchAlbumsAPI';
 import Header from '../components/Header';
-import Carregando from '../components/Carregando';
+import Loading from '../components/Loading';
+import searchAlbumsAPI from '../services/searchAlbumsAPI';
 
 class Search extends React.Component {
   state = {
-    nomePesquisa: '',
-    inputPesquisa: '',
+    nome: '',
+    artista: false,
     carregando: false,
     respostaApi: false,
     chamaApi: [],
   };
 
-  aguardaChamada({ target }) {
-    const { name } = target;
-    const { value } = target;
+  validaClick = () => {
+    const { nome } = this.state;
+    const nomeArtista = nome.length >= 2;
+
+    this.setState({ artista: nomeArtista });
+  };
+
+  pesquisaAlbum = async () => {
+    const { nome } = this.state;
+    const album = await searchAlbumsAPI(nome);
 
     this.setState({
-      [name]: value,
-    });
-  }
-
-  async aguardaClick(event) {
-    event.preventDefault();
-
-    const { inputPesquisa } = this.state;
-
-    this.setState({
-      carregando: true,
-      nomePesquisa: inputPesquisa,
-    });
-
-    const chamaApi = await searchAlbumsAPI(inputPesquisa);
-
-    this.setState({
-      inputPesquisa: '',
+      chamaApi: album,
       carregando: false,
       respostaApi: true,
-      chamaApi,
     });
-  }
+  };
 
-  albumFunc() {
-    const { nomePesquisa, chamaApi } = this.state;
+  carregaAlbum = (event) => {
+    event.preventDefault();
 
-    return chamaApi.length === 0
-      ? <p>Nenhum álbum foi encontrado</p>
-      : (
-        <div>
-          <p>
-            {`Resultado de álbuns de: ${nomePesquisa}`}
-          </p>
-          <div>
-            {chamaApi.map((album) => (
-              <Link
-                data-testid={ `link-to-album-${collectionId}` }
-                key={ album.collectionId }
-                to={ `/album/${album.collectionId}` }
-              >
-                <div>
-                  <img src={ album.collectionId } alt={ album.collectionName } />
-                </div>
-                <div>
-                  <p>{album.artistName}</p>
-                  <p>{album.collectionName}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      );
+    this.setState({ carregando: true }, this.pesquisaAlbum);
+  };
+
+  aguardaChamada({ target }) {
+    this.setState({
+      [target.name]: target.value }, this.validaClick);
   }
 
   render() {
-    const { inputPesquisa, carregando, respostaApi } = this.state;
-    const number = 2;
+    const {
+      nome,
+      artista,
+      carregando,
+      respostaApi,
+      chamaApi,
+    } = this.state;
 
     return (
       <div data-testid="page-search">
-        <Header />
-        { carregando ? <Carregando /> : (
-          <form>
+        <Header
+          carregaAlbum={ this.carregaAlbum }
+          aguardaChamada={ this.aguardaChamada }
+          artista={ artista }
+          value={ nome }
+        />
+        { carregando && (
+          <form onSubmit={ this.carregaAlbum } action="">
             <input
-              type="text"
               data-testid="search-artist-input"
-              value={ inputPesquisa }
-              name="inputPesquisa"
-              id="inputPesquisa"
-              placeholder="Nome do Artista"
+              type="text"
+              name="nome"
               onChange={ this.aguardaChamada }
             />
             <button
               type="submit"
               data-testid="search-artist-button"
-              disabled={ inputPesquisa.length < number }
-              onClick={ this.aguardaClick /* && this.albumFunc */ }
+              disabled={ !artista }
             >
               Pesquisar
             </button>
-          </form>
-        ) }
+          </form>) }
         <div>
-          { respostaApi ? this.albumFunc() : null }
+          { carregando ? <Loading /> : (
+            <div>
+              {chamaApi.length === 0 ? respostaApi && (
+                <h2>Nenhum álbum foi encontrado</h2>
+              ) : (
+                <div>
+                  <h2>{`Resultado de álbuns de: ${nome}`}</h2>
+                  {chamaApi.map(({
+                    collectionName,
+                    artworkUrl100,
+                    collectionId,
+                    artistName,
+                  }, index) => (
+                    <Link
+                      data-testid={ `link-to-album-${collectionId}` }
+                      key={ `${collectionName}-${index}` }
+                      to={ `album/${collectionId}` }
+                    >
+                      <li>
+                        <img src={ artworkUrl100 } alt={ collectionName } />
+                        <h2>{collectionName}</h2>
+                        <h3>{artistName}</h3>
+                      </li>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     );

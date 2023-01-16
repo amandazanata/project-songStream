@@ -1,11 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+/* import PropTypes from 'prop-types'; */
 import Header from '../components/Header';
-import Carregando from '../components/Carregando';
-import { getUser, updateUser } from '../services/userAPI';
+/* import Loading from '../components/Loading';
+import { getUser, updateUser } from '../services/userAPI'; */
 
 class ProfileEdit extends React.Component {
-  state = {
+  /* state = {
     name: '',
     email: '',
     bio: '',
@@ -46,7 +46,7 @@ class ProfileEdit extends React.Component {
       bio,
     } = this.state;
 
-    // console.log(name, email, imagem, bio);
+    console.log(name, email, imagem, bio);
     const number = 3;
 
     if ([name.length, email.length, imagem.length, bio.length]
@@ -71,21 +71,23 @@ class ProfileEdit extends React.Component {
   };
 
   carregaEstado = () => this.setState(({ loading }) => ({ carregando: !loading }));
-
+ */
   render() {
-    const {
+    /* const {
       carregando,
       name,
       email,
       imagem,
       bio,
-      desabilitado } = this.state;
+      desabilitado } = this.state; */
 
     return (
       <div data-testid="page-profile-edit">
         <Header />
-        {carregando ? <Carregando /> : (
+        {/* <Header />
+        {carregando ? <Loading /> : (
           <form onSubmit={ this.onClick }>
+
             <div>
 
               <input
@@ -135,15 +137,16 @@ class ProfileEdit extends React.Component {
 
           </form>
         )}
+ */}
       </div>
     );
   }
 }
 
-ProfileEdit.propTypes = {
+/* ProfileEdit.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
-};
+}; */
 
 export default ProfileEdit;

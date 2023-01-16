@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Carregando from '../components/Carregando';
+import Loading from '../components/Loading';
 import { createUser } from '../services/userAPI';
 
 class Login extends React.Component {
@@ -47,31 +47,29 @@ class Login extends React.Component {
     const { history } = this.props;
 
     return (
-      <div>
-        <div data-testid="page-login">
-          {carregando === true ? <Carregando /> : (
-            <form>
+      <div data-testid="page-login">
+        {carregando === true ? <Loading /> : (
+          <form>
 
-              <input
-                type="text"
-                data-testid="login-name-input"
-                placeholder="Nome"
-                value={ name }
-                onChange={ (event) => this.validaClick(event) }
-              />
+            <input
+              type="text"
+              data-testid="login-name-input"
+              placeholder="Nome"
+              value={ name }
+              onChange={ (event) => this.validaClick(event) }
+            />
 
-              <button
-                type="submit"
-                data-testid="login-submit-button"
-                disabled={ desab }
-                onClick={ (event) => this.clicaBotao(event) }
-              >
-                Entrar
-              </button>
-            </form>
-          )}
-          {logado && history.push('/search')}
-        </div>
+            <button
+              type="submit"
+              data-testid="login-submit-button"
+              disabled={ desab }
+              onClick={ (event) => this.clicaBotao(event) }
+            >
+              Entrar
+            </button>
+          </form>
+        )}
+        {logado && history.push('/search')}
       </div>
     );
   }

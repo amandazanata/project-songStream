@@ -1,19 +1,19 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { getUser } from '../services/userAPI';
+// import { Link } from 'react-router-dom';
+// import { getUser } from '../services/userAPI';
 import Header from '../components/Header';
-import Loading from '../components/Loading';
+// import Loading from '../components/Loading';
 
 class Profile extends React.Component {
-  state = {
+/*   state = {
     name: '',
     email: '',
     bio: '',
     img: '',
     carregando: false,
-  };
+  }; */
 
-  componentDidMount() {
+  /*  componentDidMount() {
     this.setState({ carregando: true }, async () => {
       const user = await getUser();
 
@@ -26,19 +26,19 @@ class Profile extends React.Component {
       });
     });
   }
-
+ */
   render() {
-    const {
+    /*  const {
       name,
       email,
       bio,
       img,
       carregando } = this.state;
-
+ */
     return (
       <div data-testid="page-profile">
         <Header />
-        <div>
+        {/*  <div>
           {carregando ? <Loading /> : (
             <div>
               <div>
@@ -59,7 +59,7 @@ class Profile extends React.Component {
               <h3>{bio || 'Nenhuma descrição cadastrada'}</h3>
             </div>
           )}
-        </div>
+        </div> */}
       </div>
     );
   }

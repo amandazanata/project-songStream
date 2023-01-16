@@ -42,7 +42,7 @@ class App extends React.Component {
     this.setState({ nomeValido: romeu });
   };
 
-  inputChange = ({ target }) => {
+  alteraInput = ({ target }) => {
     const state = target.name;
     const value = target.type === 'checkbox' ? target.checked : target.value;
 
@@ -74,7 +74,7 @@ class App extends React.Component {
                 { logado ? <Redirect to="/search" /> : (
                   <Login
                     userName={ userName }
-                    inputChange={ this.inputChange }
+                    alteraInput={ this.alteraInput }
                     nomeValido={ nomeValido }
                     createUser={ this.enviando }
                     carregando={ carregando }

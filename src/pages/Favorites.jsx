@@ -1,5 +1,4 @@
 import React from 'react';
-import Header from '../components/Header';
 import Loading from '../components/Loading';
 import MusicCard from '../components/MusicCard';
 import { getFavoriteSongs } from '../services/favoriteSongsAPI';
@@ -11,14 +10,16 @@ class Favorites extends React.Component {
   };
 
   componentDidMount() {
-    this.setState({ carregando: true }, this.load);
+    this.setState({ carregando: true }, this.api);
   }
 
-  load = () => {
-    getFavoriteSongs().then((list) => this.setState({ lista: list, carregando: false }));
+  api = () => {
+    getFavoriteSongs()
+      .then((lista) => this
+        .setState({ lista, carregando: false }));
   };
 
-  refreshFavorites = async () => {
+  atualiza = async () => {
     const favoritas = await getFavoriteSongs();
     this.setState({ lista: favoritas });
   };
@@ -30,23 +31,27 @@ class Favorites extends React.Component {
     } = this.state;
     return (
       <div data-testid="page-favorites">
-        <Header />
-        {carregando ? <Loading /> : (
-          <ul>
-            {lista.map((music) => (
-              <MusicCard
-                key={ music.trackName }
-                trackName={ music.trackName }
-                url={ music.previewUrl }
-                trackId={ music.trackId }
-                music={ music }
-                isLoading={ (retorno) => this.setState({ carregando: retorno }) }
-                refresh={ this.refreshFavorites }
-                checked
-              />
-            ))}
-          </ul>
-        ) }
+        <header>
+          Músicas Favoritas
+        </header>
+        <div>
+          {carregando ? <Loading /> : (
+            <ul>
+              {lista.map((music) => (
+                <MusicCard
+                  key={ music.trackName }
+                  trackName={ music.trackName }
+                  url={ music.previewUrl }
+                  trackId={ music.trackId }
+                  music={ music }
+                  isLoading={ (retorno) => this.setState({ carregando: retorno }) }
+                  refresh={ this.atualiza }
+                  checked
+                />
+              ))}
+            </ul>
+          ) }
+        </div>
       </div>
     );
   }

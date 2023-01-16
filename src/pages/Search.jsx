@@ -1,114 +1,83 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { Component } from 'react';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
-import searchAlbumsAPI from '../services/searchAlbumsAPI';
+// import searchAlbumsApi from '../services/searchAlbumsAPI';
 
-class Search extends React.Component {
+class Search extends Component {
   state = {
     nome: '',
     artista: false,
     carregando: false,
-    respostaApi: false,
-    chamaApi: [],
+    // albumEncontrado: true,
   };
 
-  validaClick = () => {
+  artistValidate = () => {
     const { nome } = this.state;
-    const nomeArtista = nome.length >= 2;
+    const validName = nome.length >= 2;
 
-    this.setState({ artista: nomeArtista });
+    this.setState({ artista: validName });
   };
 
-  pesquisaAlbum = async () => {
-    const { nome } = this.state;
-    const album = await searchAlbumsAPI(nome);
-
-    this.setState({
-      chamaApi: album,
-      carregando: false,
-      respostaApi: true,
-    });
+  inputChange = ({ target }) => {
+    this.setState({ [target.name]: target.value }, this.artistValidate);
   };
 
-  carregaAlbum = (event) => {
-    event.preventDefault();
-
-    this.setState({ carregando: true }, this.pesquisaAlbum);
+  mjAgresteBaiano = (albumId) => {
+    const { history } = this.props;
+    history.push(`album/${albumId}`);
   };
 
-  aguardaChamada({ target }) {
-    this.setState({
-      [target.name]: target.value }, this.validaClick);
+  /*   wgFunction () {
+    // albumEncontrado true
+
+    // verifica album
   }
-
+ */
   render() {
     const {
-      nome,
       artista,
       carregando,
-      respostaApi,
-      chamaApi,
     } = this.state;
-
     return (
       <div data-testid="page-search">
-        <Header
-          carregaAlbum={ this.carregaAlbum }
-          aguardaChamada={ this.aguardaChamada }
-          artista={ artista }
-          value={ nome }
-        />
-        { carregando && (
-          <form onSubmit={ this.carregaAlbum } action="">
-            <input
-              data-testid="search-artist-input"
-              type="text"
-              name="nome"
-              onChange={ this.aguardaChamada }
-            />
-            <button
-              type="submit"
-              data-testid="search-artist-button"
-              disabled={ !artista }
-            >
-              Pesquisar
-            </button>
-          </form>) }
-        <div>
-          { carregando ? <Loading /> : (
+        <Header />
+        <form action="">
+          <input
+            data-testid="search-artist-input"
+            type="text"
+            name="nome"
+            onChange={ this.inputChange }
+          />
+          <button
+            type="submit"
+            data-testid="search-artist-button"
+            disabled={ !artista }
+          >
+            Pesquisar
+          </button>
+          { carregando ? (<Loading />) : (
             <div>
-              {chamaApi.length === 0 ? respostaApi && (
-                <h2>Nenhum álbum foi encontrado</h2>
-              ) : (
-                <div>
-                  <h2>{`Resultado de álbuns de: ${nome}`}</h2>
-                  {chamaApi.map(({
-                    collectionName,
-                    artworkUrl100,
-                    collectionId,
-                    artistName,
-                  }, index) => (
-                    <Link
-                      data-testid={ `link-to-album-${collectionId}` }
-                      key={ `${collectionName}-${index}` }
-                      to={ `album/${collectionId}` }
-                    >
-                      <li>
-                        <img src={ artworkUrl100 } alt={ collectionName } />
-                        <h2>{collectionName}</h2>
-                        <h3>{artistName}</h3>
-                      </li>
-                    </Link>
-                  ))}
-                </div>
-              )}
+              <button
+                type="submit"
+                data-testid={ `link-to-album-${collectionId}` }
+                onClick={ () => this.mjAgresteBaiano }
+              >
+                Ir para o álbum
+              </button>
+              {/* ternário para wgFunction com null ou nenhum album */}
             </div>
+
           )}
-        </div>
+        </form>
       </div>
     );
   }
 }
+
+Search.propTypes = {
+  history: PropTypes.shape({
+    push: PropTypes.func,
+  }).isRequired,
+};
 
 export default Search;

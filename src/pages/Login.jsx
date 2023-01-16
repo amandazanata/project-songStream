@@ -4,64 +4,76 @@ import Loading from '../components/Loading';
 import { createUser } from '../services/userAPI';
 
 class Login extends Component {
-  constructor() {
+  constructor() { // usando constructor após entender corretamente realizando projeto Online Store
     super();
+
     this.state = {
-      name: '',
+      nome: '',
       isButtonDisabled: true,
-      isLoggedIn: false,
-      loading: false,
+      logado: false,
+      carregando: false,
     };
   }
 
   handleChange({ target }) {
-    const minLength = 3;
+    const number = 3;
+
     this.setState(() => ({
-      name: target.value,
-      isButtonDisabled: target.value.length < minLength,
+      nome: target.value,
+      isButtonDisabled: target.value.length < number,
     }));
   }
 
-  handleSubmit(event) {
-    const { name } = this.state;
+  aguardaClick(event) {
+    const { nome } = this.state;
+
     event.preventDefault();
+
     this.setState({
-      loading: true,
+      carregando: true,
     }, async () => {
-      await createUser({ name });
+      await createUser({ nome });
+
       this.setState({
-        loading: false,
-        isLoggedIn: true,
+        carregando: false,
+        logado: true,
       });
     });
   }
 
   render() {
-    const { name, isButtonDisabled, isLoggedIn, loading } = this.state;
+    const {
+      nome,
+      isButtonDisabled,
+      logado,
+      carregando } = this.state;
+
     return (
       <div data-testid="page-login" className="loginFormContainer">
-        {loading === true
+        {carregando === true
           ? <Loading />
           : (
             <form>
               <input
-                type="text"
-                onChange={ (event) => this.handleChange(event) }
                 data-testid="login-name-input"
-                value={ name }
+                type="text"
+                value={ nome }
+                onChange={ (event) => this.handleChange(event) }
                 placeholder="Nome"
               />
               <button
-                type="submit"
-                onClick={ (event) => this.handleSubmit(event) }
                 data-testid="login-submit-button"
+                type="submit"
                 disabled={ isButtonDisabled }
+                onClick={ (event) => this.aguardaClick(event) }
               >
                 Entrar
               </button>
             </form>
           )}
-        {isLoggedIn && <Redirect to="/search" />}
+        {logado && <Redirect to="/search" />}
+        {/* tentei usar history.push, mas não funcionou */}
+        {/* dica https://www.youtube.com/watch?v=tiAlSpyWIDs&ab_channel=PedroTech */}
       </div>
     );
   }

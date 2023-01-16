@@ -1,56 +1,57 @@
 import React from 'react';
 import Header from '../components/Header';
+import Loading from '../components/Loading';
 import MusicCard from '../components/MusicCard';
 import { getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
-import Loading from '../components/Loading';
 
 class Favorites extends React.Component {
-  constructor() {
+  constructor() { // usando constructor após entender corretamente realizando projeto Online Store
     super();
 
     this.state = {
-      favoriteMusics: [],
-      loading: false,
+      carregando: false,
+      favoritas: [],
     };
 
-    this.saveFavoriteMusics = this.saveFavoriteMusics.bind(this);
-    this.handleSong = this.handleSong.bind(this);
+    this.salva = this.salva.bind(this);
+    this.remove = this.remove.bind(this);
   }
 
   componentDidMount() {
-    this.saveFavoriteMusics();
+    this.salva();
   }
 
-  async handleSong(track) {
-    this.setState({ loading: true });
+  async remove(track) { // funcao para remover musica
+    this.setState({ carregando: true });
     await removeSong(track);
-    this.setState({ loading: true });
 
-    await this.saveFavoriteMusics();
-    this.setState({ loading: false });
+    this.setState({ carregando: true });
+    await this.salva();
+
+    this.setState({ carregando: false });
   }
 
-  async saveFavoriteMusics() {
-    this.setState({ loading: true });
+  async salva() { // funcao para salvar musica
+    this.setState({ carregando: true });
+    await getFavoriteSongs().then((res) => this.setState({ favoritas: res }));
 
-    await getFavoriteSongs().then((res) => this.setState({ favoriteMusics: res }));
-
-    this.setState({ loading: false });
+    this.setState({ carregando: false });
   }
 
   render() {
-    const { favoriteMusics, loading } = this.state;
+    const { favoritas, carregando } = this.state;
+
     return (
       <div data-testid="page-favorites">
         <Header />
-        {loading ? <Loading /> : null}
+        {carregando ? <Loading /> : null}
         <p className="fav-music-title">Músicas favoritas</p>
-        {favoriteMusics.map((track) => (
+        {favoritas.map((track) => (
           <MusicCard
             key={ track.trackId }
             track={ track }
-            isFavorite={ favoriteMusics.some((music) => music.trackId === track.trackId) }
-            favoriteSong={ () => this.handleSong(track) }
+            isFavorite={ favoritas.some((music) => music.trackId === track.trackId) } // prop
+            favoriteSong={ () => this.remove(track) } // prop
           />
         ))}
       </div>

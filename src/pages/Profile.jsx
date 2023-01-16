@@ -5,57 +5,61 @@ import Loading from '../components/Loading';
 import { getUser } from '../services/userAPI';
 
 class Profile extends Component {
-  constructor() {
+  constructor() { // usando constructor após entender corretamente realizando projeto Online Store
     super();
+
     this.state = {
-      userName: '',
-      userEmail: '',
-      userBio: '',
-      userImg: '',
-      loading: false,
+      nome: '',
+      email: '',
+      bio: '',
+      imagem: '',
+      carregando: false,
     };
   }
 
   componentDidMount() {
-    this.setState({ loading: true }, async () => {
-      const user = await getUser();
+    this.setState({ carregando: true }, async () => {
+      const user = await getUser(); // chama getUser do userApi
+
       this.setState({
-        userName: user.name,
-        userEmail: user.email,
-        userBio: user.description,
-        userImg: user.image,
-        loading: false,
+        nome: user.name,
+        email: user.email,
+        bio: user.description,
+        imagem: user.image,
+        carregando: false,
       });
     });
   }
 
   render() {
-    const { userName, userEmail, userBio, userImg, loading } = this.state;
+    const { nome, email, bio, imagem, carregando } = this.state;
     return (
       <div data-testid="page-profile">
         <Header />
         <div className="profileContainer">
-          { loading ? <Loading /> : (
+          { carregando ? <Loading /> : (
             <>
               <div className="profile-row">
                 <img
-                  src={ userImg }
-                  className="profile-img"
-                  alt=""
                   data-testid="profile-image"
+                  src={ imagem }
+                  alt=""
                 />
-                <Link to="/profile/edit" className="edit-btn">Editar perfil</Link>
+                <Link to="/profile/edit">Editar perfil</Link>
               </div>
+
               <h4>Nome</h4>
-              <p>{userName}</p>
+              <p>{nome}</p>
+
               <h4>E-mail</h4>
-              <p>{userEmail || 'Nenhum e-mail cadastrado'}</p>
+              <p>{email || 'Nenhum e-mail cadastrado'}</p>
+
               <h4>Descrição</h4>
-              <p>{userBio || 'Nenhuma descrição cadastrada'}</p>
+              <p>{bio || 'Nenhuma descrição cadastrada'}</p>
+
             </>
           )}
         </div>
-
       </div>
     );
   }

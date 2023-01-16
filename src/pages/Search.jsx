@@ -1,27 +1,27 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
-import searchAlbumsAPIs from '../services/searchAlbumsAPI';
 import Loading from '../components/Loading';
+import searchAlbumsAPIs from '../services/searchAlbumsAPI';
 
 class Search extends React.Component {
-  constructor() {
+  constructor() { // usando constructor após entender corretamente realizando projeto Online Store
     super();
 
     this.state = {
-      nameSearched: '',
-      searchInput: '',
-      loading: false,
-      apiRequest: [],
-      requestSearch: false,
+      nome: '',
+      pesquisa: '',
+      requisicao: false,
+      carregando: false,
+      api: [],
     };
 
-    this.handleChange = this.handleChange.bind(this);
+    this.albumPesquisado = this.albumPesquisado.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    this.showAlbum = this.showAlbum.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
-  handleChange({ target }) {
+  handleChange({ target }) { // dica https://pt-br.reactjs.org/docs/forms.html
     const { name } = target;
     const { value } = target;
 
@@ -30,32 +30,36 @@ class Search extends React.Component {
     });
   }
 
-  async handleClick(event) {
+  async handleClick(event) { // usa preventDefault para não atualizar a página
     event.preventDefault();
-    const { searchInput } = this.state;
+
+    const { pesquisa } = this.state;
 
     this.setState({
-      loading: true,
-      nameSearched: searchInput,
+      carregando: true,
+      nome: pesquisa,
     });
-    const apiRequest = await searchAlbumsAPIs(searchInput);
+
+    const api = await searchAlbumsAPIs(pesquisa); // api chamada
+
     this.setState({
-      apiRequest,
-      searchInput: '',
-      loading: false,
-      requestSearch: true,
+      api,
+      pesquisa: '',
+      carregando: false,
+      requisicao: true,
     });
   }
 
-  showAlbum() {
-    const { apiRequest, nameSearched } = this.state;
+  albumPesquisado() {
+    const { api, nome } = this.state;
 
-    return apiRequest.length === 0 ? <p>Nenhum álbum foi encontrado</p>
+    return api.length === 0 // cria card do album pesquisado com as solicitações do READ-me
+      ? <p>Nenhum álbum foi encontrado</p>
       : (
         <div className="search-result">
-          <p className="result-text">{`Resultado de álbuns de: ${nameSearched}`}</p>
+          <p className="result-text">{`Resultado de álbuns de: ${nome}`}</p>
           <div className="album-miniature-div">
-            {apiRequest.map((album) => (
+            {api.map((album) => (
               <Link
                 to={ `/album/${album.collectionId}` }
                 className="album-miniature-link"
@@ -79,28 +83,28 @@ class Search extends React.Component {
   }
 
   render() {
-    const { searchInput, loading, requestSearch } = this.state;
-    const minLetters = 2;
+    const { pesquisa, carregando, requisicao } = this.state;
+    const number = 2;
 
     return (
       <div data-testid="page-search">
         <Header />
-        {loading ? <Loading /> : (
+        {carregando ? <Loading /> : (
           <form className="search-form">
             <input
               data-testid="search-artist-input"
               type="text"
-              name="searchInput"
-              id="searchInput"
-              placeholder="Nome do Artista"
-              value={ searchInput }
+              name="pesquisa"
+              id="pesquisa"
+              value={ pesquisa }
               onChange={ this.handleChange }
+              placeholder="Nome do Artista"
             />
             <button
+              data-testid="search-artist-button"
               type="submit"
               id="btn-search-form"
-              data-testid="search-artist-button"
-              disabled={ searchInput.length < minLetters }
+              disabled={ pesquisa.length < number } // valida click
               onClick={ this.handleClick }
             >
               Pesquisar
@@ -108,7 +112,7 @@ class Search extends React.Component {
           </form>
         )}
 
-        { requestSearch ? this.showAlbum() : null }
+        { requisicao ? this.albumPesquisado() : null }
 
       </div>
 

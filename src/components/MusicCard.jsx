@@ -1,41 +1,44 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import Loading from './Loading';
 
 class MusicCard extends React.Component {
-  constructor() {
+  constructor() { // usando constructor após entender corretamente realizando projeto Online Store
     super();
 
     this.state = {
-      loading: false,
+      carregando: false,
     };
   }
 
   render() {
-    const { loading } = this.state;
-    const { track, isFavorite, favoriteSong } = this.props;
+    const { carregando } = this.state;
+    const {
+      track,
+      isFavorite,
+      favoriteSong } = this.props;
 
     return (
-      loading ? <Loading /> : (
-        <div className="individual-music-container">
-
+      carregando ? <Loading /> : (
+        <div>
           <p className="song-title">{track.trackName}</p>
-          <div className="audio-favorita-container">
+          <div>
             <audio data-testid="audio-component" src={ track.previewUrl } controls>
               <track kind="captions" />
               O seu navegador não suporta o elemento
               <code>audio</code>
+
             </audio>
             <label htmlFor={ track.trackId }>
+
               Favorita
+
               <input
-                className="favorite"
-                type="checkbox"
                 data-testid={ `checkbox-music-${track.trackId}` }
+                type="checkbox"
                 id={ track.trackId }
-                onChange={ favoriteSong }
                 checked={ isFavorite }
+                onChange={ favoriteSong }
               />
             </label>
           </div>
@@ -47,7 +50,7 @@ class MusicCard extends React.Component {
 }
 
 MusicCard.propTypes = {
-  track: PropTypes.shape({
+  track: PropTypes.shape({ // dica: https://dev.to/cesareferrari/how-to-specify-the-shape-of-an-object-with-proptypes-3c56
     trackName: PropTypes.string,
     previewUrl: PropTypes.string,
     trackId: PropTypes.number,
@@ -55,6 +58,6 @@ MusicCard.propTypes = {
   isFavorite: PropTypes.bool,
   favoriteSong: PropTypes.func.isRequired,
 };
-MusicCard.defaultProps = { isFavorite: false };
+MusicCard.defaultProps = { isFavorite: false }; // https://medium.com/@henrique.weiand/react-defaultprops-proptypes-plano-de-aula-vi-2ac0f990cdd9
 
 export default MusicCard;

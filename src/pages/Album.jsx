@@ -1,93 +1,100 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
-import MusicCard from '../components/MusicCard';
-import { getFavoriteSongs, addSong, removeSong } from '../services/favoriteSongsAPI';
-import getMusics from '../services/musicsAPI';
 import Loading from '../components/Loading';
+import MusicCard from '../components/MusicCard';
+import getMusics from '../services/musicsAPI';
+import { getFavoriteSongs, addSong, removeSong } from '../services/favoriteSongsAPI';
 
 class Album extends React.Component {
   constructor() {
-    super();
+    super(); // usando constructor após entender corretamente realizando projeto Online Store
 
     this.state = {
-      loading: false,
+      artista: '',
+      nomeAlbum: '',
+      capa: '',
+      carregando: false,
       album: [],
-      artAlbum: '',
-      nameArtist: '',
-      nameAlbum: '',
       favoriteMusics: [],
     };
 
-    this.findMusics = this.findMusics.bind(this);
-    this.saveFavoriteMusics = this.saveFavoriteMusics.bind(this);
-    this.handleSong = this.handleSong.bind(this);
+    this.procuraMusicas = this.procuraMusicas.bind(this);
+    this.favoritaMusicas = this.favoritaMusicas.bind(this);
+    this.aguardaMusica = this.aguardaMusica.bind(this);
   }
 
   componentDidMount() {
-    this.findMusics();
-    this.saveFavoriteMusics();
+    this.procuraMusicas();
+    this.favoritaMusicas();
   }
 
-  async handleSong(track) {
+  async aguardaMusica(track) { // prop
     const { favoriteMusics } = this.state;
-    this.setState({ loading: true });
+    this.setState({ carregando: true });
     if (favoriteMusics.some(({ trackId }) => trackId === track.trackId)) {
       await removeSong(track);
-      this.setState({ loading: true });
+      this.setState({ carregando: true });
     } else {
       await addSong(track);
-      this.setState({ loading: true });
+      this.setState({ carregando: true });
     }
     await getFavoriteSongs().then((res) => this.setState(() => ({
       favoriteMusics: res,
     })));
-    this.setState({ loading: false });
+    this.setState({ carregando: false });
   }
 
-  async saveFavoriteMusics() {
+  async favoritaMusicas() {
     const favoriteMusics = await getFavoriteSongs();
     this.setState({ favoriteMusics });
   }
 
-  async findMusics() {
-    const { match: { params: { id } } } = this.props;
-    const musics = await getMusics(id);
-    if (musics !== undefined) {
+  async procuraMusicas() {
+    const { match: { params: { id } } } = this.props; // descontroi prop do react
+    const musicas = await getMusics(id);
+
+    if (musicas !== undefined) {
       this.setState({
-        album: musics,
-        nameArtist: musics[0].artistName,
-        nameAlbum: musics[0].collectionName,
-        artAlbum: musics[0].artworkUrl100,
+        album: musicas,
+        artista: musicas[0].artistName,
+        nomeAlbum: musicas[0].collectionName,
+        capa: musicas[0].artworkUrl100,
       });
     }
   }
 
   render() {
     const {
-      album, artAlbum, nameAlbum, nameArtist, favoriteMusics, loading } = this.state;
+      album,
+      capa,
+      nomeAlbum,
+      artista,
+      favoriteMusics,
+      carregando } = this.state;
+
     return (
       <div data-testid="page-album">
         <Header />
         <div className="album-container">
           <div className="album-info-container">
-            <img src={ artAlbum } alt={ nameAlbum } />
-            <p data-testid="album-name">{ nameAlbum }</p>
-            <p data-testid="artist-name">{ nameArtist }</p>
+            <img src={ capa } alt={ nomeAlbum } />
+            <p data-testid="album-name">{ nomeAlbum }</p>
+            <p data-testid="artist-name">{ artista }</p>
           </div>
-          { loading ? <Loading /> : (
+          { carregando ? <Loading /> : (
             <div className="music-container">
-
               <p className="text-found-album">
-                {`Musicas encontradas para o álbum ${nameAlbum}`}
+                {`${nomeAlbum}`}
               </p>
-              {album.slice(1).map((track) => (
+              {album.slice(1).map((track) => ( // map para criar o card
                 <MusicCard
                   key={ track.trackId }
                   track={ track }
-                  isFavorite={ favoriteMusics
-                    .some((music) => music.trackId === track.trackId) }
-                  favoriteSong={ () => this.handleSong(track) }
+                  isFavorite={ // prop
+                    favoriteMusics.some((music) => music.trackId === track.trackId)
+                  }
+                  favoriteSong={ () => this.aguardaMusica(track) } // prop
                 />
               ))}
             </div>
@@ -101,7 +108,7 @@ class Album extends React.Component {
 }
 
 Album.propTypes = {
-  match: PropTypes.shape({
+  match: PropTypes.shape({ // dica: https://dev.to/cesareferrari/how-to-specify-the-shape-of-an-object-with-proptypes-3c56
     params: PropTypes.shape({
       id: PropTypes.string.isRequired,
     }).isRequired,

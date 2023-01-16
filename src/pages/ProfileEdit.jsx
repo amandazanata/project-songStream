@@ -5,52 +5,61 @@ import Loading from '../components/Loading';
 import { getUser, updateUser } from '../services/userAPI';
 
 class ProfileEdit extends Component {
-  constructor() {
+  constructor() { // usando constructor após entender corretamente realizando projeto Online Store
     super();
 
     this.state = {
-      loading: true,
       name: '',
       email: '',
       image: '',
       description: '',
+      carregando: true,
       isSaveButtonDisabled: true,
     };
   }
 
   async componentDidMount() {
-    const user = await getUser();
+    const usuario = await getUser();
+
     this.setState({
-      name: user.name,
-      email: user.email || '',
-      image: user.image || '',
-      description: user.description || '',
+      name: usuario.name,
+      email: usuario.email || '',
+      image: usuario.image || '',
+      description: usuario.description || '',
     }, () => {
-      this.loadingState();
-      this.validateSubmit();
+      this.aguardaEstado();
+      this.validacaoEmail();
     });
   }
 
-  onChange = ({ target }) => {
+  onChange = ({ target }) => { // pega os valores e seta o estado anterior, porém só faz isso depois de validar o email
     const { name, value } = target;
     this.setState((prevState) => ({
       ...prevState,
       [name]: value,
     }
-    ), () => this.validateSubmit());
+    ), () => this.validacaoEmail());
   };
 
-  validateSubmit = () => {
+  validacaoEmail = () => { // funcao para validar email
     const {
       name,
       email,
       image,
       description,
     } = this.state;
-    console.log(name, email, image, description);
-    const minLength = 3;
-    if ([name.length, email.length, image.length, description.length]
-      .some((val) => val < minLength)
+    // console.log(name, email, image, description);
+
+    const number = 3;
+
+    if (
+      [
+        name.length,
+        email.length,
+        image.length,
+        description.length,
+      ]
+        .some((param) => param < number)
       || (!email.includes('@') && (!email.includes('.com')))) {
       return this.setState({
         isSaveButtonDisabled: true,
@@ -60,61 +69,71 @@ class ProfileEdit extends Component {
     });
   };
 
-  onSaveClick = async (e) => {
+  validaClick = async (event) => { // funcao para não atualizar os dados até clicar no batão
     const { name, email, image, description } = this.state;
-    e.preventDefault();
+
+    event.preventDefault();
+
     await updateUser({ name, email, image, description });
-    const { history } = this.props;
+
+    const { history } = this.props; // dica de aula ao vivo ciclo de vida de componentes
     history.push('/profile');
   };
 
-  loadingState = () => this.setState(({ loading }) => ({ loading: !loading }));
+  aguardaEstado = () => this.setState(({ loading }) => ({ carregando: !loading }));
 
   render() {
-    const { loading, name, email, image, description, isSaveButtonDisabled } = this.state;
+    const {
+      carregando,
+      name,
+      email,
+      image,
+      description,
+      isSaveButtonDisabled } = this.state;
+
     return (
       <div data-testid="page-profile-edit">
         <Header />
-        {loading ? <Loading /> : (
-          <form onSubmit={ this.onClick }>
+        {carregando ? <Loading /> : (
+          <form onSubmit={ this.validaClick }>
             <div className="edit-profile-form">
               <input
+                data-testid="edit-input-name"
                 type="text"
                 name="name"
-                data-testid="edit-input-name"
                 value={ name }
                 onChange={ this.onChange }
               />
               <input
+                data-testid="edit-input-email"
                 type="email"
                 name="email"
-                data-testid="edit-input-email"
-                placeholder={ `${name.toLowerCase()}@email.com` }
                 value={ email }
                 onChange={ this.onChange }
+                placeholder={ `${name.toLowerCase()}@email.com` } // mantém todas letras em minúscula
               />
               <textarea
-                name="description"
+                data-testid="edit-input-description"
                 cols="30"
                 rows="1"
-                data-testid="edit-input-description"
-                placeholder={ `Eu sou o ${name}. Amo escutar músicas nesse site!` }
+                name="description"
                 value={ description }
                 onChange={ this.onChange }
+                placeholder={ `${name}` }
               />
               <input
+                data-testid="edit-input-image"
                 type="url"
                 name="image"
-                data-testid="edit-input-image"
                 value={ image }
                 onChange={ this.onChange }
               />
             </div>
             <button
+              data-testid="edit-button-save"
               id="save-edtProfile-btn"
               type="submit"
-              data-testid="edit-button-save"
-              onClick={ this.onSaveClick }
+              onClick={ this.validaClick }
               disabled={ isSaveButtonDisabled }
             >
               Editar perfil
@@ -127,7 +146,7 @@ class ProfileEdit extends Component {
 }
 
 ProfileEdit.propTypes = {
-  history: PropTypes.shape({
+  history: PropTypes.shape({ // dica: https://dev.to/cesareferrari/how-to-specify-the-shape-of-an-object-with-proptypes-3c56
     push: PropTypes.func.isRequired,
   }).isRequired,
 };

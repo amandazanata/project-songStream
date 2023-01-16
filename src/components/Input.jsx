@@ -11,7 +11,7 @@ class Input extends Component {
     } = this.props;
 
     return (
-      <form action="" onSubmit={ api } className="search-input">
+      <form action="" onSubmit={ api }>
         <input
           data-testid="search-artist-input"
           type="text"
@@ -21,8 +21,8 @@ class Input extends Component {
           placeholder="Pesquise"
         />
         <button
-          type="submit"
           data-testid="search-artist-button"
+          type="submit"
           disabled={ !artista }
         >
           Procurar

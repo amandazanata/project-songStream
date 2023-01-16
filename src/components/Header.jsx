@@ -4,33 +4,33 @@ import { getUser } from '../services/userAPI';
 import Loading from './Loading';
 
 class Header extends React.Component {
-  constructor() {
+  constructor() { // usando constructor após entender corretamente realizando projeto Online Store
     super();
 
     this.state = {
       name: '',
-      loadingPage: false,
+      carregando: false,
     };
   }
 
   async componentDidMount() {
     this.setState({
-      loadingPage: true,
+      carregando: true,
     }, async () => {
-      const userName = await getUser();
+      const usuario = await getUser();
       this.setState({
-        name: userName.name,
-        loadingPage: false,
+        name: usuario.name,
+        carregando: false,
       });
     });
   }
 
   render() {
-    const { name, loadingPage } = this.state;
+    const { name, carregando } = this.state;
     return (
-      <header data-testid="header-component" className="mainHeader">
-        <div className="header-info">
-          { loadingPage ? <Loading />
+      <header data-testid="header-component">
+        <div>
+          { carregando ? <Loading />
             : (
               <h1 data-testid="header-user-name">{ name }</h1>
             ) }

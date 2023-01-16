@@ -11,8 +11,8 @@ class Profile extends Component {
     this.state = {
       nome: '',
       email: '',
-      bio: '',
       imagem: '',
+      bio: '',
       carregando: false,
     };
   }
@@ -24,25 +24,32 @@ class Profile extends Component {
       this.setState({
         nome: user.name,
         email: user.email,
-        bio: user.description,
         imagem: user.image,
+        bio: user.description,
         carregando: false,
       });
     });
   }
 
   render() {
-    const { nome, email, bio, imagem, carregando } = this.state;
+    const {
+      nome,
+      email,
+      imagem,
+      bio,
+      carregando } = this.state;
+
     return (
       <div data-testid="page-profile">
         <Header />
         <div className="profileContainer">
           { carregando ? <Loading /> : (
-            <>
+            <div>
               <div className="profile-row">
                 <img
                   data-testid="profile-image"
                   src={ imagem }
+                  className="profile-img"
                   alt=""
                 />
                 <Link to="/profile/edit">Editar perfil</Link>
@@ -57,7 +64,7 @@ class Profile extends Component {
               <h4>Descrição</h4>
               <p>{bio || 'Nenhuma descrição cadastrada'}</p>
 
-            </>
+            </div>
           )}
         </div>
       </div>

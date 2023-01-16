@@ -8,10 +8,10 @@ class Login extends Component {
     super();
 
     this.state = {
-      nome: '',
+      name: '',
+      loading: false,
+      isLoggedIn: false,
       isButtonDisabled: true,
-      logado: false,
-      carregando: false,
     };
   }
 
@@ -19,45 +19,43 @@ class Login extends Component {
     const number = 3;
 
     this.setState(() => ({
-      nome: target.value,
+      name: target.value,
       isButtonDisabled: target.value.length < number,
     }));
   }
 
   aguardaClick(event) {
-    const { nome } = this.state;
+    const { name } = this.state;
 
     event.preventDefault();
-
     this.setState({
-      carregando: true,
+      loading: true,
     }, async () => {
-      await createUser({ nome });
-
+      await createUser({ name });
       this.setState({
-        carregando: false,
-        logado: true,
+        loading: false,
+        isLoggedIn: true,
       });
     });
   }
 
   render() {
     const {
-      nome,
+      name,
       isButtonDisabled,
-      logado,
-      carregando } = this.state;
+      isLoggedIn,
+      loading } = this.state;
 
     return (
       <div data-testid="page-login" className="loginFormContainer">
-        {carregando === true
+        {loading === true
           ? <Loading />
           : (
             <form>
               <input
                 data-testid="login-name-input"
                 type="text"
-                value={ nome }
+                value={ name }
                 onChange={ (event) => this.handleChange(event) }
                 placeholder="Nome"
               />
@@ -71,7 +69,7 @@ class Login extends Component {
               </button>
             </form>
           )}
-        {logado && <Redirect to="/search" />}
+        {isLoggedIn && <Redirect to="/search" />}
         {/* tentei usar history.push, mas não funcionou */}
         {/* dica https://www.youtube.com/watch?v=tiAlSpyWIDs&ab_channel=PedroTech */}
       </div>

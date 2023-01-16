@@ -48,7 +48,7 @@ class ProfileEdit extends Component {
       image,
       description,
     } = this.state;
-    // console.log(name, email, image, description);
+    console.log(name, email, image, description);
 
     const number = 3;
 
@@ -84,18 +84,18 @@ class ProfileEdit extends Component {
 
   render() {
     const {
-      carregando,
       name,
       email,
       image,
       description,
+      carregando,
       isSaveButtonDisabled } = this.state;
 
     return (
       <div data-testid="page-profile-edit">
         <Header />
         {carregando ? <Loading /> : (
-          <form onSubmit={ this.validaClick }>
+          <form onSubmit={ this.onClick }>
             <div className="edit-profile-form">
               <input
                 data-testid="edit-input-name"

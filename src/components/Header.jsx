@@ -4,58 +4,54 @@ import { getUser } from '../services/userAPI';
 import Loading from './Loading';
 
 class Header extends React.Component {
-  state = {
-    nome: '',
-    carregando: true,
-  };
-
-  componentDidMount() {
-    this.guardaNome()
-      .then((resp) => this.setState({ nome: resp, carregando: false }));
+  constructor() {
+    super();
+    this.state = {
+      name: '',
+      loadingPage: false,
+    };
   }
 
-  guardaNome = async () => {
-    const user = await getUser();
-    const retorno = user.name;
-    return retorno;
-  };
+  async componentDidMount() {
+    this.setState({
+      loadingPage: true,
+    }, async () => {
+      const userName = await getUser();
+      this.setState({
+        name: userName.name,
+        loadingPage: false,
+      });
+    });
+  }
 
   render() {
-    const { nome, carregando } = this.state;
-
+    const { name, loadingPage } = this.state;
     return (
       <header data-testid="header-component">
+        { loadingPage ? <Loading />
+          : (
+            <p data-testid="header-user-name">{ name }</p>
+          ) }
         <nav>
-          <ul>
-            <li>
-              <Link
-                to="/search"
-                data-testid="link-to-search"
-              >
-                Pesquisa
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/favorites"
-                data-testid="link-to-favorites"
-              >
-                Favoritas
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/profile"
-                data-testid="link-to-profile"
-              >
-                Perfil
-              </Link>
-            </li>
-          </ul>
+          <Link
+            to="/search"
+            data-testid="link-to-search"
+          >
+            Search
+          </Link>
+          <Link
+            to="/favorites"
+            data-testid="link-to-favorites"
+          >
+            Favorites
+          </Link>
+          <Link
+            to="/profile"
+            data-testid="link-to-profile"
+          >
+            Profile
+          </Link>
         </nav>
-        { carregando ? <Loading /> : (
-          <h2 data-testid="header-user-name">{nome}</h2>
-        ) }
       </header>
     );
   }

@@ -1,146 +1,129 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
 import { getUser, updateUser } from '../services/userAPI';
 
-class ProfileEdit extends React.Component {
-  state = {
-    name: '',
-    email: '',
-    bio: '',
-    imagem: '',
-    carregando: true,
-    desabilitado: true,
-  };
+class ProfileEdit extends Component {
+  constructor() {
+    super();
+    this.state = {
+      loading: true,
+      name: '',
+      email: '',
+      image: '',
+      description: '',
+      isSaveButtonDisabled: true,
+    };
+  }
 
   async componentDidMount() {
     const user = await getUser();
-
     this.setState({
       name: user.name,
       email: user.email || '',
-      imagem: user.image || '',
-      bio: user.description || '',
+      image: user.image || '',
+      description: user.description || '',
     }, () => {
-      this.carregaEstado();
-      this.validaConteudo();
+      this.loadingState();
+      this.validateSubmit();
     });
   }
 
-  aguardaConteudo = ({ target }) => {
+  onChange = ({ target }) => {
     const { name, value } = target;
-
     this.setState((prevState) => ({
       ...prevState,
       [name]: value,
     }
-    ), () => this.validaConteudo());
+    ), () => this.validateSubmit());
   };
 
-  validaConteudo = () => {
+  validateSubmit = () => {
     const {
       name,
       email,
-      imagem,
-      bio,
+      image,
+      description,
     } = this.state;
-
-    console.log(name, email, imagem, bio);
-    const number = 3;
-
-    if ([name.length, email.length, imagem.length, bio.length]
-      .some((valor) => valor < number)
+    console.log(name, email, image, description);
+    const minLength = 3;
+    if ([name.length, email.length, image.length, description.length]
+      .some((val) => val < minLength)
       || (!email.includes('@') && (!email.includes('.com')))) {
       return this.setState({
-        desabilitado: true,
+        isSaveButtonDisabled: true,
       });
     } this.setState({
-      desabilitado: false,
+      isSaveButtonDisabled: false,
     });
   };
 
-  salvaConteudo = async (event) => {
-    const { name, email, imagem, bio } = this.state;
+  onSaveClick = async (e) => {
+    const { name, email, image, description } = this.state;
+    e.preventDefault();
+    await updateUser({ name, email, image, description });
     const { history } = this.props;
-
-    event.preventDefault();
-
-    await updateUser({ name, email, imagem, bio });
     history.push('/profile');
   };
 
-  carregaEstado = () => this.setState(({ loading }) => ({ carregando: !loading }));
+  loadingState = () => this.setState(({ loading }) => ({ loading: !loading }));
 
   render() {
-    const {
-      carregando,
-      name,
-      email,
-      imagem,
-      bio,
-      desabilitado } = this.state;
-
+    const { loading, name, email, image, description, isSaveButtonDisabled } = this.state;
     return (
       <div data-testid="page-profile-edit">
         <Header />
-        {carregando ? <Loading /> : (
+        {loading ? <Loading /> : (
           <form onSubmit={ this.onClick }>
-
-            <div>
-
+            <div className="edit-profile-form">
               <input
-                data-testid="edit-input-name"
                 type="text"
                 name="name"
+                data-testid="edit-input-name"
                 value={ name }
-                onChange={ this.aguardaConteudo }
+                onChange={ this.onChange }
               />
-
               <input
-                data-testid="edit-input-email"
                 type="email"
                 name="email"
-                value={ email }
-                onChange={ this.aguardaConteudo }
+                data-testid="edit-input-email"
                 placeholder={ `${name.toLowerCase()}@email.com` }
+                value={ email }
+                onChange={ this.onChange }
               />
-
               <textarea
-                data-testid="edit-input-bio"
+                name="description"
                 cols="30"
                 rows="1"
-                name="bio"
-                value={ bio }
-                onChange={ this.aguardaConteudo }
+                data-testid="edit-input-description"
                 placeholder={ `Eu sou o ${name}. Amo escutar músicas nesse site!` }
+                value={ description }
+                onChange={ this.onChange }
               />
-
               <input
-                data-testid="edit-input-imagem"
                 type="url"
-                name="imagem"
-                value={ imagem }
-                onChange={ this.aguardaConteudo }
+                name="image"
+                data-testid="edit-input-image"
+                value={ image }
+                onChange={ this.onChange }
               />
             </div>
-
             <button
-              data-testid="edit-button-save"
+              id="save-edtProfile-btn"
               type="submit"
-              onClick={ this.salvaConteudo }
-              disabled={ desabilitado }
+              data-testid="edit-button-save"
+              onClick={ this.onSaveClick }
+              disabled={ isSaveButtonDisabled }
             >
               Editar perfil
             </button>
-
           </form>
         )}
       </div>
     );
   }
 }
-
 ProfileEdit.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,

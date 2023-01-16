@@ -1,82 +1,73 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Loading from '../components/Loading';
 import { createUser } from '../services/userAPI';
+import Loading from '../components/Loading';
 
 class Login extends React.Component {
-  state = {
-    name: '',
-    desab: true,
-    logado: false,
-    carregando: false,
+  constructor() {
+    super();
+    this.state = {
+      isDisabled: true,
+      name: '',
+      loading: false,
+    };
+  }
+
+  onInputChange = ({ target }) => {
+    this.setState({
+      name: target.value }, () => {
+      const MIN_CHARACTERS = 3;
+      const isValid = target.value.length < MIN_CHARACTERS;
+      this.setState({ isDisabled: isValid });
+    });
   };
 
-  validaClick({ target }) {
-    const number = 3;
-
-    this.setState(() => ({
-      name: target.value,
-      desab: target.value.length < number,
-    }));
-  }
-
-  clicaBotao(event) {
-    const { name } = this.state;
-
-    event.preventDefault();
-
-    this.setState({
-      carregando: true,
-    }, async () => {
-      await createUser({ name });
-
-      this.setState({
-        carregando: false,
-        logado: true,
-      });
-    });
-  }
+  handleClick = () => {
+    this.setState(
+      { loading: true },
+      async () => {
+        const { name } = this.state;
+        await createUser({ name });
+        this.setState({
+          loading: false,
+        });
+        const { history } = this.props;
+        history.push('/search');
+      },
+    );
+  };
 
   render() {
-    const {
-      name,
-      desab,
-      logado,
-      carregando } = this.state;
-
-    const { history } = this.props;
-
+    const { isDisabled, name, loading } = this.state;
+    if (loading) return <Loading />;
     return (
       <div data-testid="page-login">
-        {carregando === true ? <Loading /> : (
-          <form>
-
-            <input
-              type="text"
-              data-testid="login-name-input"
-              placeholder="Nome"
-              value={ name }
-              onChange={ (event) => this.validaClick(event) }
-            />
-
-            <button
-              type="submit"
-              data-testid="login-submit-button"
-              disabled={ desab }
-              onClick={ (event) => this.clicaBotao(event) }
-            >
-              Entrar
-            </button>
-          </form>
-        )}
-        {logado && history.push('/search')}
+        <form>
+          <input
+            type="text"
+            placeholder="Nome:"
+            data-testid="login-name-input"
+            onChange={ this.onInputChange }
+            value={ name }
+          />
+          <button
+            type="submit"
+            className="btn btn-dark submit mt-2"
+            data-testid="login-submit-button"
+            disabled={ isDisabled }
+            onClick={ this.handleClick }
+          >
+            Entrar
+          </button>
+        </form>
       </div>
     );
   }
 }
-
 Login.propTypes = {
-  history: PropTypes.object,
-}.isRequired;
+  history: PropTypes.shape({
+    push: PropTypes.func.isRequired,
+  }).isRequired,
+};
 
 export default Login;

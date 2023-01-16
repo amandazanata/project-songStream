@@ -1,68 +1,62 @@
-import React from 'react';
-// import { Link } from 'react-router-dom';
-// import { getUser } from '../services/userAPI';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
-// import Loading from '../components/Loading';
+import Loading from '../components/Loading';
+import { getUser } from '../services/userAPI';
 
-class Profile extends React.Component {
-/*   state = {
-    name: '',
-    email: '',
-    bio: '',
-    img: '',
-    carregando: false,
-  }; */
+class Profile extends Component {
+  constructor() {
+    super();
+    this.state = {
+      userName: '',
+      userEmail: '',
+      userBio: '',
+      userImg: '',
+      loading: false,
+    };
+  }
 
-  /*  componentDidMount() {
-    this.setState({ carregando: true }, async () => {
+  componentDidMount() {
+    this.setState({ loading: true }, async () => {
       const user = await getUser();
-
       this.setState({
-        name: user.name,
-        email: user.email,
-        bio: user.description,
-        img: user.image,
-        carregando: false,
+        userName: user.name,
+        userEmail: user.email,
+        userBio: user.description,
+        userImg: user.image,
+        loading: false,
       });
     });
   }
- */
+
   render() {
-    /*  const {
-      name,
-      email,
-      bio,
-      img,
-      carregando } = this.state;
- */
+    const { userName, userEmail, userBio, userImg, loading } = this.state;
     return (
       <div data-testid="page-profile">
         <Header />
-        {/*  <div>
-          {carregando ? <Loading /> : (
-            <div>
-              <div>
+        <div className="profileContainer">
+          { loading ? <Loading /> : (
+            <>
+              <div className="profile-row">
                 <img
-                  src={ img }
-                  data-testid="profile-image"
+                  src={ userImg }
+                  className="profile-img"
                   alt=""
+                  data-testid="profile-image"
                 />
-                <Link to="/profile/edit">
-                  Editar perfil
-                </Link>
+                <Link to="/profile/edit" className="edit-btn">Editar perfil</Link>
               </div>
-              <h2>Nome</h2>
-              <h3>{name}</h3>
-              <h2>E-mail</h2>
-              <h3>{email || 'Nenhum e-mail cadastrado'}</h3>
-              <h2>Descrição</h2>
-              <h3>{bio || 'Nenhuma descrição cadastrada'}</h3>
-            </div>
+              <h4>Nome</h4>
+              <p>{userName}</p>
+              <h4>E-mail</h4>
+              <p>{userEmail || 'Nenhum e-mail cadastrado'}</p>
+              <h4>Descrição</h4>
+              <p>{userBio || 'Nenhuma descrição cadastrada'}</p>
+            </>
           )}
-        </div> */}
+        </div>
       </div>
     );
   }
 }
-
 export default Profile;

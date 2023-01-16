@@ -1,57 +1,53 @@
 import React from 'react';
-import Loading from '../components/Loading';
+import Header from '../components/Header';
 import MusicCard from '../components/MusicCard';
-import { getFavoriteSongs } from '../services/favoriteSongsAPI';
+import { getFavoriteSongs, removeSong } from '../services/favoriteSongsAPI';
+import Loading from '../components/Loading';
 
 class Favorites extends React.Component {
-  state = {
-    carregando: false,
-    lista: [],
-  };
-
-  componentDidMount() {
-    this.setState({ carregando: true }, this.api);
+  constructor() {
+    super();
+    this.state = {
+      favoriteMusics: [],
+      loading: false,
+    };
+    this.saveFavoriteMusics = this.saveFavoriteMusics.bind(this);
+    this.handleSong = this.handleSong.bind(this);
   }
 
-  api = () => {
-    getFavoriteSongs()
-      .then((lista) => this
-        .setState({ lista, carregando: false }));
-  };
+  componentDidMount() {
+    this.saveFavoriteMusics();
+  }
 
-  atualiza = async () => {
-    const favoritas = await getFavoriteSongs();
-    this.setState({ lista: favoritas });
-  };
+  async handleSong(track) {
+    this.setState({ loading: true });
+    await removeSong(track);
+    this.setState({ loading: true });
+    await this.saveFavoriteMusics();
+    this.setState({ loading: false });
+  }
+
+  async saveFavoriteMusics() {
+    this.setState({ loading: true });
+    await getFavoriteSongs().then((res) => this.setState({ favoriteMusics: res }));
+    this.setState({ loading: false });
+  }
 
   render() {
-    const {
-      carregando,
-      lista,
-    } = this.state;
+    const { favoriteMusics, loading } = this.state;
     return (
       <div data-testid="page-favorites">
-        <header>
-          Músicas Favoritas
-        </header>
-        <div>
-          {carregando ? <Loading /> : (
-            <ul>
-              {lista.map((music) => (
-                <MusicCard
-                  key={ music.trackName }
-                  trackName={ music.trackName }
-                  url={ music.previewUrl }
-                  trackId={ music.trackId }
-                  music={ music }
-                  isLoading={ (retorno) => this.setState({ carregando: retorno }) }
-                  refresh={ this.atualiza }
-                  checked
-                />
-              ))}
-            </ul>
-          ) }
-        </div>
+        <Header />
+        {loading ? <Loading /> : null}
+        <p className="fav-music-title">Músicas favoritas</p>
+        {favoriteMusics.map((track) => (
+          <MusicCard
+            key={ track.trackId }
+            track={ track }
+            isFavorite={ favoriteMusics.some((music) => music.trackId === track.trackId) }
+            favoriteSong={ () => this.handleSong(track) }
+          />
+        ))}
       </div>
     );
   }

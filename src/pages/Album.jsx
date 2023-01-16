@@ -1,53 +1,53 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import Loading from '../components/Loading';
-import MusicCard from '../components/MusicCard';
 import getMusics from '../services/musicsAPI';
+import MusicCard from '../components/MusicCard';
 
-class Album extends React.Component {
+class Album extends Component {
   state = {
-    carregando: true,
-    listaMusica: [],
-    artista: '',
-
+    artist: '',
+    loading: true,
+    musicsList: [],
   };
 
   componentDidMount() {
-    const prop = this.props;
-    const { id } = prop.match.params;
-    this.getData(id).then((data) => {
+    const romeu = this.props;
+    const { id } = romeu.match.params;
+
+    this.requisicao(id).then((data) => {
       this.setState({
-        listaMusica: data,
-        artista: data[0].artistName,
-        carregando: false,
+        musicsList: data,
+        artist: data[0].artistName,
+        loading: false,
       });
     });
   }
 
-  getData = async (id) => {
+  requisicao = async (id) => {
     const albumInfo = await getMusics(id);
-    // console.log(albumInfo);
     return albumInfo;
   };
 
   render() {
     const {
-      carregando,
-      artista,
-      listaMusica,
+      loading,
+      artist,
+      musicsList,
     } = this.state;
+
     return (
       <div data-testid="page-album">
         <Header />
-        {carregando ? <Loading /> : (
+        {loading ? <Loading /> : (
           <div>
-            <h2 data-testid="artista-name">{artista}</h2>
-            <h3 data-testid="album-name">
-              {`${listaMusica[0].collectionName}`}
-            </h3>
+            <h1 data-testid="artist-name">{artist}</h1>
+            <h2 data-testid="album-name">
+              {`${musicsList[0].collectionName}`}
+            </h2>
             <ul>
-              {listaMusica.map((music, index) => (
+              {musicsList.map((music, index) => (
                 index !== 0 && (
                   <MusicCard
                     key={ music.trackName }

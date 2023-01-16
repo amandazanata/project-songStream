@@ -1,83 +1,109 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+import searchAlbumsAPIs from '../services/searchAlbumsAPI';
 import Loading from '../components/Loading';
-// import searchAlbumsApi from '../services/searchAlbumsAPI';
 
-class Search extends Component {
-  state = {
-    nome: '',
-    artista: false,
-    carregando: false,
-    // albumEncontrado: true,
-  };
-
-  artistValidate = () => {
-    const { nome } = this.state;
-    const validName = nome.length >= 2;
-
-    this.setState({ artista: validName });
-  };
-
-  inputChange = ({ target }) => {
-    this.setState({ [target.name]: target.value }, this.artistValidate);
-  };
-
-  mjAgresteBaiano = (albumId) => {
-    const { history } = this.props;
-    history.push(`album/${albumId}`);
-  };
-
-  /*   wgFunction () {
-    // albumEncontrado true
-
-    // verifica album
+class Search extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      name: '',
+      searchInput: '',
+      carregando: false,
+      apiRequest: [],
+      requestSearch: false,
+    };
+    this.aguardaApi = this.aguardaApi.bind(this);
+    this.aguardaClick = this.aguardaClick.bind(this);
+    this.showAlbum = this.showAlbum.bind(this);
   }
- */
+
+  aguardaApi({ target }) {
+    const { name } = target;
+    const { value } = target;
+    this.setState({
+      [name]: value,
+    });
+  }
+
+  async aguardaClick(event) {
+    event.preventDefault();
+    const { searchInput } = this.state;
+    this.setState({
+      carregando: true,
+      name: searchInput,
+    });
+    const apiRequest = await searchAlbumsAPIs(searchInput);
+    this.setState({
+      apiRequest,
+      searchInput: '',
+      carregando: false,
+      requestSearch: true,
+    });
+  }
+
+  showAlbum() {
+    const { apiRequest, name } = this.state;
+    return apiRequest.length === 0 ? <p>Nenhum álbum foi encontrado</p>
+      : (
+        <div className="search-result">
+          <p className="result-text">{`Resultado de álbuns de: ${name}`}</p>
+          <div className="album-miniature-div">
+            {apiRequest.map((album) => (
+              <Link
+                to={ `/album/${album.collectionId}` }
+                className="album-miniature-link"
+                key={ album.collectionId }
+                data-testid={ `link-to-album-${album.collectionId}` }
+              >
+                <div className="album-miniature">
+                  <div className="album-image">
+                    <img src={ album.artworkUrl100 } alt={ album.collectionName } />
+                  </div>
+                  <div className="album-artist-info">
+                    <p>{album.collectionName}</p>
+                    <p>{album.artistName}</p>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>);
+  }
+
   render() {
-    const {
-      artista,
-      carregando,
-    } = this.state;
+    const { searchInput, carregando, requestSearch } = this.state;
+    const number = 2;
     return (
       <div data-testid="page-search">
         <Header />
-        <form action="">
-          <input
-            data-testid="search-artist-input"
-            type="text"
-            name="nome"
-            onChange={ this.inputChange }
-          />
-          <button
-            type="submit"
-            data-testid="search-artist-button"
-            disabled={ !artista }
-          >
-            Pesquisar
-          </button>
-          { carregando ? (<Loading />) : (
-            <div>
-              <button
-                type="submit"
-                data-testid={ `link-to-album-${collectionId}` }
-                onClick={ () => this.mjAgresteBaiano }
-              >
-                Ir para o álbum
-              </button>
-              {/* ternário para wgFunction com null ou nenhum album */}
-            </div>
-
-          )}
-        </form>
+        {carregando ? <Loading /> : (
+          <form className="search-form">
+            <input
+              data-testid="search-artist-input"
+              type="text"
+              name="searchInput"
+              id="searchInput"
+              placeholder="Nome do Artista"
+              value={ searchInput }
+              onChange={ this.aguardaApi }
+            />
+            <button
+              type="submit"
+              data-testid="search-artist-button"
+              id="btn-search-form"
+              disabled={ searchInput.length < number }
+              onClick={ this.aguardaClick }
+            >
+              Pesquisar
+            </button>
+          </form>
+        )}
+        { requestSearch ? this.showAlbum() : null }
       </div>
     );
   }
 }
-
-Search.propTypes = {
-  history: PropTypes.shape({
-    push: PropTypes.func,
-  }).isRequired,
-};
 
 export default Search;

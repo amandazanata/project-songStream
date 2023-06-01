@@ -11,6 +11,7 @@
   - Ver a lista de músicas favoritas;
   - Ver o perfil da pessoa logada;
   - Editar o perfil da pessoa logada;
+ 
 
   <summary><strong>:memo: Habilidades</strong></summary><br />
 

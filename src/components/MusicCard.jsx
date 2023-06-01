@@ -13,13 +13,13 @@ class MusicCard extends React.Component {
 
   render() {
     const { carregando } = this.state;
-    const {
+    const { // A função addSong é chamada quando algum checkbox é clicado;
       track,
       isFavorite,
       favoriteSong } = this.props;
 
     return (
-      carregando ? <Loading /> : (
+      carregando ? <Loading /> : ( // A mensagem Carregando... é exibida após clicar no checkbox e removida depois do retorno da API.
         <div>
           <p className="song-title">{track.trackName}</p>
           <div>
@@ -35,7 +35,7 @@ class MusicCard extends React.Component {
 
               <input
                 data-testid={ `checkbox-music-${track.trackId}` }
-                type="checkbox"
+                type="checkbox" // Existe um checkbox para cada música da lista;
                 id={ track.trackId }
                 checked={ isFavorite }
                 onChange={ favoriteSong }

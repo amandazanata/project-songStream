@@ -9,54 +9,55 @@ class Profile extends Component {
     super();
 
     this.state = {
-      nome: '',
+      userName: '',
       email: '',
       imagem: '',
       bio: '',
-      carregando: false,
+      loading: false,
     };
   }
 
   componentDidMount() {
-    this.setState({ carregando: true }, async () => {
-      const user = await getUser(); // chama getUser do userApi
+    this.setState({ loading: true }, async () => {
+      const user = await getUser(); // A API getUser é usada para recuperar as informações da pessoa logada;
 
-      this.setState({
-        nome: user.name,
+      this.setState({ // As informações da pessoa logada são exibidas na tela;
+        userName: user.name,
         email: user.email,
         imagem: user.image,
         bio: user.description,
-        carregando: false,
+        loading: false,
       });
     });
   }
 
   render() {
     const {
-      nome,
+      userName,
       email,
       imagem,
       bio,
-      carregando } = this.state;
+      loading } = this.state;
 
     return (
       <div data-testid="page-profile">
         <Header />
         <div className="profileContainer">
-          { carregando ? <Loading /> : (
+          { loading ? <Loading /> : ( // Enquanto aguarda a resposta da API, exiba a mensagem Carregando....
             <div>
               <div className="profile-row">
                 <img
-                  data-testid="profile-image"
                   src={ imagem }
-                  className="profile-img"
+                  data-testid="profile-image"
                   alt=""
+                  className="profile-img"
                 />
                 <Link to="/profile/edit">Editar perfil</Link>
+                {/* Foi criado um link para a rota de edição de perfil com o texto Editar perfil; */}
               </div>
-
+              {/* Ao clicar no link Editar perfil, a navegação acontece corretamente. */}
               <h4>Nome</h4>
-              <p>{nome}</p>
+              <p>{userName}</p>
 
               <h4>E-mail</h4>
               <p>{email || 'Nenhum e-mail cadastrado'}</p>

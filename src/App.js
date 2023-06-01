@@ -54,3 +54,20 @@ class App extends React.Component {
   }
 }
 export default App;
+
+/* O que será verificado
+
+A rota / é uma rota existente e que renderiza um componente com o data-testid com valor page-login;
+
+A rota /search é uma rota existente e que renderiza um componente com o data-testid com valor page-search;
+
+A rota /album/:id é uma rota existente e que renderiza um componente com o data-testid com valor page-album;
+
+A rota /favorites é uma rota existente e que renderiza um componente com o data-testid com valor page-favorites;
+
+A rota /profile é uma rota existente e que renderiza um componente com o data-testid com valor page-profile;
+
+A rota /profile/edit é uma rota existente e que renderiza um componente com o data-testid com valor page-profile-edit;
+
+Existe uma página para rotas não mapeadas e que renderiza um componente com o data-testid com valor page-not-found;
+ */

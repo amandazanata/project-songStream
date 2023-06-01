@@ -9,33 +9,36 @@ class Header extends React.Component {
 
     this.state = {
       name: '',
-      carregando: false,
+      loadingPage: false,
     };
   }
 
   async componentDidMount() {
     this.setState({
-      carregando: true,
+      loadingPage: true, // Ao clicar no botão, a mensagem Carregando... é exibida
     }, async () => {
-      const usuario = await getUser();
+      const usuario = await getUser(); // A função getUser é chamada ao renderizar o componente;
+
       this.setState({
         name: usuario.name,
-        carregando: false,
+        loadingPage: false, // removida após o retorno da API;
       });
     });
   }
 
   render() {
-    const { name, carregando } = this.state;
+    const { name, loadingPage } = this.state;
+
     return (
       <header data-testid="header-component">
         <div>
-          { carregando ? <Loading />
+          { loadingPage ? <Loading /> // A mensagem de Carregando... é exibida ao renderizar o componente
             : (
-              <h1 data-testid="header-user-name">{ name }</h1>
+              <h1 data-testid="header-user-name">{ name }</h1> /* O nome da pessoa usuária está presente na tela após o retorno da API. */
             ) }
         </div>
         <nav>
+          {/* Os links de navegação são exibidos na página de pesquisa; */}
           <Link
             to="/search"
             data-testid="link-to-search"

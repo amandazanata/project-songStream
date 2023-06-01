@@ -13,15 +13,15 @@ class ProfileEdit extends Component {
       email: '',
       image: '',
       description: '',
-      carregando: true,
+      loading: true,
       isSaveButtonDisabled: true,
     };
   }
 
   async componentDidMount() {
-    const usuario = await getUser();
+    const usuario = await getUser(); // É feita a requisição para getUser para recuperar as informações da pessoa logada;
 
-    this.setState({
+    this.setState({ // O formulário é renderizado já preenchido com as informações da pessoa logada;
       name: usuario.name,
       email: usuario.email || '',
       image: usuario.image || '',
@@ -32,7 +32,7 @@ class ProfileEdit extends Component {
     });
   }
 
-  onChange = ({ target }) => { // pega os valores e seta o estado anterior, porém só faz isso depois de validar o email
+  onChange = ({ target }) => { // É possível alterar os valores dos campos;
     const { name, value } = target;
     this.setState((prevState) => ({
       ...prevState,
@@ -41,16 +41,16 @@ class ProfileEdit extends Component {
     ), () => this.validacaoEmail());
   };
 
-  validacaoEmail = () => { // funcao para validar email
+  validacaoEmail = () => { // O botão salvar é habilitado somente se todos os campos estiverem válidos;
     const {
       name,
       email,
       image,
       description,
     } = this.state;
-    console.log(name, email, image, description);
-
     const number = 3;
+
+    console.log(name, email, image, description);
 
     if (
       [
@@ -70,17 +70,21 @@ class ProfileEdit extends Component {
   };
 
   validaClick = async (event) => { // funcao para não atualizar os dados até clicar no batão
-    const { name, email, image, description } = this.state;
+    const {
+      name,
+      email,
+      image,
+      description } = this.state;
 
     event.preventDefault();
 
-    await updateUser({ name, email, image, description });
+    await updateUser({ name, email, image, description }); // As informações são enviadas usando a API updateUser;
 
     const { history } = this.props; // dica de aula ao vivo ciclo de vida de componentes
-    history.push('/profile');
+    history.push('/profile'); // Após salvar as informações a pessoa é redirecionada para a página de exibição de perfil.
   };
 
-  aguardaEstado = () => this.setState(({ loading }) => ({ carregando: !loading }));
+  aguardaEstado = () => this.setState(({ loading }) => ({ loading: !loading }));
 
   render() {
     const {
@@ -88,15 +92,15 @@ class ProfileEdit extends Component {
       email,
       image,
       description,
-      carregando,
+      loading,
       isSaveButtonDisabled } = this.state;
 
     return (
       <div data-testid="page-profile-edit">
         <Header />
-        {carregando ? <Loading /> : (
+        {loading ? <Loading /> : (
           <form onSubmit={ this.onClick }>
-            <div className="edit-profile-form">
+            <div>
               <input
                 data-testid="edit-input-name"
                 type="text"
@@ -105,8 +109,8 @@ class ProfileEdit extends Component {
                 onChange={ this.onChange }
               />
               <input
-                data-testid="edit-input-email"
                 type="email"
+                data-testid="edit-input-email"
                 name="email"
                 value={ email }
                 onChange={ this.onChange }
@@ -119,20 +123,19 @@ class ProfileEdit extends Component {
                 name="description"
                 value={ description }
                 onChange={ this.onChange }
-                placeholder={ `${name}` }
+                placeholder={ `Olá, ${name}! Descreva-se brevemente.` }
               />
               <input
-                data-testid="edit-input-image"
                 type="url"
+                data-testid="edit-input-image"
                 name="image"
                 value={ image }
                 onChange={ this.onChange }
               />
             </div>
             <button
-              data-testid="edit-button-save"
-              id="save-edtProfile-btn"
               type="submit"
+              data-testid="edit-button-save"
               onClick={ this.validaClick }
               disabled={ isSaveButtonDisabled }
             >
